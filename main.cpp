@@ -70,7 +70,7 @@ int main() {
 
     auto* shader = new sf::Shader(std::filesystem::path("../shader.frag") , sf::Shader::Type::Fragment );
     shader->setUniform("frag_ScreenResolution", sf::Vector2f(WIDTH, HEIGHT));
-    shader->setUniform("frag_LightAttenuation" , 100);
+    shader->setUniform("frag_LightAttenuation" , 100.f);        //  setUniform的参数不支持int，仅支持float
     sf::RenderStates state;
     state.shader = shader;
 
