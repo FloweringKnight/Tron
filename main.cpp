@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 #include <random>
 
 constexpr int WIDTH = 600;
@@ -68,11 +69,13 @@ int main() {
     sf::Text text1(font , text , 35);
     text1.setPosition(sf::Vector2f(WIDTH / 2 - 80, 20));
 
-    auto* shader = new sf::Shader(std::filesystem::path("../shader.frag") , sf::Shader::Type::Fragment );
+    auto* shader = new sf::Shader;
+    bool b = shader->loadFromFile("../shader.frag",sf::Shader::Type::Fragment);
+    if (!b) { std::cout << "fail to load shader!!!" << std::endl; }
     shader->setUniform("frag_ScreenResolution", sf::Vector2f(WIDTH, HEIGHT));
     shader->setUniform("frag_LightAttenuation" , 100.f);        //  setUniform的参数不支持int，仅支持float
-    sf::RenderStates state;
-    state.shader = shader;
+    sf::RenderStates state(shader);
+    // state.shader = shader;
 
     bool game = true;
 
@@ -117,16 +120,16 @@ int main() {
             // renderTexture.draw(c);
             renderTexture.display();
 
-            shader->setUniform("frag_LightOrigin", sf::Vector2f(static_cast<float>(p1.x),static_cast<float>(p1.y)));
-            shader->setUniform("frag_LightColor" , p1.getColor());
-            renderTexture.draw(sprite , state);
-            shader->setUniform("frag_LightOrigin", sf::Vector2f(static_cast<float>(p2.x),static_cast<float>(p2.y)));
-            shader->setUniform("frag_LightColor" , p2.getColor());
-            renderTexture.draw(sprite , state);
+            shader->setUniform("frag_LightOrigin", sf::Vector2f(static_cast<float>(p1.x), static_cast<float>(p1.y)));
+            shader->setUniform("frag_LightColor", p1.getColor());
+            renderTexture.draw(sprite, state);
+            shader->setUniform("frag_LightOrigin", sf::Vector2f(static_cast<float>(p2.x), static_cast<float>(p2.y)));
+            shader->setUniform("frag_LightColor", p2.getColor());
+            renderTexture.draw(sprite, state);
         }
 
         window.clear();
-        window.draw(sprite);
+        window.draw(sprite,state);
         window.display();
 
 
